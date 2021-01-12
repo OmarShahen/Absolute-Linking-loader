@@ -5,8 +5,8 @@ class file_formatter:
         self.file = open("programs/" + file_name, "r")
         self.HTME_headers = ['H', 'D', 'R', 'T', 'M', 'E']
         self.file_dict = self.divide_HTME_record()
-        self.get_H_record()
         self.PROG_name = self.extract_PROG_name()
+        self.program_starting_address = self.extract_program_starting_address()
 
     def divide_HTME_record(self):
         file_lines = []
@@ -53,6 +53,33 @@ class file_formatter:
 
     def get_PROG_name(self):
         return self.PROG_name
+
+    def get_T_records(self):
+        all_T_records = []
+        for key in self.file_dict:
+            if "T" in key:
+                all_T_records.append(self.file_dict[key])
+        return all_T_records
+
+    def get_T_records_with_data(self):
+        all_records = []
+        T_record = {}
+        for key in self.file_dict:
+            if "T" in key:
+                T_data = self.file_dict[key].split(".")
+                T_record["number"] = key
+                T_record["starting_address"] = T_data[1]
+                T_record["size"] = T_data[2]
+                T_record["object_codes"] = T_data[3]
+                all_records.append(T_record)
+                T_record = {}
+        return all_records
+
+    def extract_program_starting_address(self):
+        return self.file_dict["H"].split(".")[2]
+
+    def get_program_starting_address(self):
+        return self.program_starting_address
 
 
 if __name__ == "__main__":
