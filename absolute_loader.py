@@ -4,24 +4,31 @@ from tabulate import tabulate
 
 class absolute_loader(file_formatter):
 
-    def __init__(self, file_name):
+    def __init__(self, file_name, memory_given=None):
         super().__init__(file_name)
-        self.memory = self.generate_memory()
-        self.memory_plotter()
-        # self.print_memory()
-        self.print_memory_rows()
+        if memory_given == None:
+            self.memory = self.generate_memory()
+            self.memory = self.memory_plotter(self.memory)
+        else:
+            self.memory = self.memory_plotter(memory_given)
 
-    def generate_memory(self, no_of_rows=332):
+    def generate_memory(self, no_of_rows=16):
         memory = [['000000', '0', '1', '2', '3', '4', '5', '6', '7',
                    '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']]
         current_location = '000000'
+        nulls = ['null', 'null', 'null', 'null', 'null', 'null', 'null', 'null',
+                 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null']
         for i in range(1, no_of_rows):
-            memory.append([current_location])
+            memory.append([current_location] + nulls)
             current_location = self.zero_filler(
                 str(int(current_location) + 10))
+
         return memory
 
-    def memory_plotter(self):
+    def return_memory(self):
+        return self.memory
+
+    def memory_plotter(self, memory):
         for T_record in self.get_T_records_with_data():
             address_location = T_record["starting_address"]
             content_location = address_location[len(address_location)-1]
@@ -30,45 +37,38 @@ class absolute_loader(file_formatter):
             y_location = None
             x_location = None
             # Find the location in address column
-            for i in range(1, len(self.memory)):
-                if self.memory[i][0] == address_location:
+            for i in range(1, len(memory)):
+                if memory[i][0] == address_location:
                     y_location = i
                     break
             # Find the location in content row
-            for j in range(1, len(self.memory[0])):
-                if self.memory[0][j] == content_location:
+            for j in range(1, len(memory[0])):
+                if memory[0][j] == content_location:
                     x_location = j
                     break
 
             splitted_object_codes = self.split_object_codes(
                 T_record["object_codes"])
 
-            row_length = len(self.memory[0])-1
+            row_length = len(memory[0])-1
             counter = 0
             done = False
-            for i in range(y_location, len(self.memory)):
+            for i in range(y_location, len(memory)):
                 if done == True:
                     break
                 for j in range(x_location, row_length+1):
                     if len(splitted_object_codes) == counter:
                         done = True
                         break
-                    self.memory[i].insert(j, splitted_object_codes[counter])
+                    memory[i][j] = splitted_object_codes[counter]
                     counter += 1
-        return self.memory
+        return memory
 
     def split_object_codes(self, object_codes):
         splitted_object_codes = []
         for i in range(0, len(object_codes), 2):
             splitted_object_codes.append(object_codes[i] + object_codes[i+1])
         return splitted_object_codes
-
-    def print_memory(self):
-
-        for row in self.memory:
-            for element in row:
-                print(element, end=" ")
-            print()
 
     def print_memory_rows(self):
         print(tabulate(self.memory, headers="firstrow"))
@@ -83,4 +83,4 @@ class absolute_loader(file_formatter):
 
 
 if __name__ == "__main__":
-    absolute_loader("PROG1.txt")
+    absolute_loader("PROG3.txt")
