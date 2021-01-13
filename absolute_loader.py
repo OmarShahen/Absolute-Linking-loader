@@ -11,7 +11,7 @@ class absolute_loader(file_formatter):
         # self.print_memory()
         self.print_memory_rows()
 
-    def generate_memory(self, no_of_rows=10):
+    def generate_memory(self, no_of_rows=332):
         memory = [['000000', '0', '1', '2', '3', '4', '5', '6', '7',
                    '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']]
         current_location = '000000'
@@ -55,7 +55,7 @@ class absolute_loader(file_formatter):
                         break
                     self.memory[i].insert(j, splitted_object_codes[counter])
                     counter += 1
-            return self.memory
+        return self.memory
 
     def split_object_codes(self, object_codes):
         splitted_object_codes = []
@@ -83,4 +83,4 @@ class absolute_loader(file_formatter):
 
 
 if __name__ == "__main__":
-    absolute_loader("PROG2.txt")
+    absolute_loader("PROG1.txt")
