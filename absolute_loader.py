@@ -1,4 +1,5 @@
 from file_formatter import file_formatter
+from tabulate import tabulate
 
 
 class absolute_loader(file_formatter):
@@ -54,6 +55,7 @@ class absolute_loader(file_formatter):
                         break
                     self.memory[i].insert(j, splitted_object_codes[counter])
                     counter += 1
+            return self.memory
 
     def split_object_codes(self, object_codes):
         splitted_object_codes = []
@@ -69,8 +71,7 @@ class absolute_loader(file_formatter):
             print()
 
     def print_memory_rows(self):
-        for row in self.memory:
-            print(row)
+        print(tabulate(self.memory, headers="firstrow"))
 
     def zero_filler(self, value, desired_length=6):
         if "0x" in value:
@@ -82,4 +83,4 @@ class absolute_loader(file_formatter):
 
 
 if __name__ == "__main__":
-    absolute_loader("PROG3.txt")
+    absolute_loader("PROG2.txt")
