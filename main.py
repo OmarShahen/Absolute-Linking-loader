@@ -9,13 +9,21 @@ def main():
     all_objects = []
     object_record = {}
     files_list = files.split('+')
-
     for i in range(len(files_list)):
-        object_record["file_name"] = files_list[i]
-        object_record["memory"] = absolute_loader(
-            files_list[i] + '.txt').return_memory()
-        all_objects.append(object_record)
-        object_record = {}
+        if i == 0:
+            object_record["file_name"] = files_list[i]
+            file_obj = absolute_loader(files_list[i] + '.txt')
+            object_record["memory"] = file_obj.return_memory()
+            returned_memory = file_obj.return_memory()
+            all_objects.append(object_record)
+            object_record = {}
+        else:
+            object_record["file_name"] = files_list[i]
+            file_obj = absolute_loader(files_list[i] + '.txt', returned_memory)
+            object_record["memory"] = file_obj.return_memory()
+            returned_memory = file_obj.return_memory()
+            all_objects.append(object_record)
+            object_record = {}
 
     while True:
         for i in range(len(all_objects)):
@@ -23,14 +31,15 @@ def main():
         print(len(all_objects)+1, '. Final Result')
         choice = int(input("Select Option: "))
         if choice == 4:
-            show_output(choice-1, all_objects[choice-2])
+            file_obj.print_memory_rows()
         else:
             show_output(choice, all_objects[choice-1])
 
 
 def show_output(choice, object_record):
     print(object_record["file_name"])
-    print(tabulate(object_record["memory"], headers="firstrow"))
+    print(tabulate(absolute_loader(
+        object_record["file_name"] + '.txt').return_memory(), headers="firstrow"))
 
 
 if __name__ == "__main__":
