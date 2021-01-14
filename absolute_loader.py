@@ -12,7 +12,7 @@ class absolute_loader(file_formatter):
         else:
             self.memory = self.memory_plotter(memory_given)
 
-    def generate_memory(self, no_of_rows=16):
+    def generate_memory(self, no_of_rows=22):
         memory = [['000000', '0', '1', '2', '3', '4', '5', '6', '7',
                    '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']]
         current_location = '000000'
@@ -21,8 +21,20 @@ class absolute_loader(file_formatter):
         for i in range(1, no_of_rows):
             memory.append([current_location] + nulls)
             current_location = self.zero_filler(
-                str(int(current_location) + 10))
+                hex(int(current_location, 16) + 16))
 
+        return memory
+
+    def give_memory(starting_address, no_of_rows=80):
+        memory = [['000000', '0', '1', '2', '3', '4', '5', '6', '7',
+                   '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']]
+        current_location = public_zero_filler(starting_address)
+        nulls = ['null', 'null', 'null', 'null', 'null', 'null', 'null', 'null',
+                 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null']
+        for i in range(1, no_of_rows):
+            memory.append([current_location] + nulls)
+            current_location = public_zero_filler(
+                hex((int(current_location, 16) + 16)))
         return memory
 
     def return_memory(self):
@@ -80,6 +92,15 @@ class absolute_loader(file_formatter):
         for i in range(zero_count):
             value = "0" + value
         return value
+
+
+def public_zero_filler(value, desired_length=6):
+    if "0x" in value:
+        value = value[2:]
+    zero_count = desired_length - len(value)
+    for i in range(zero_count):
+        value = "0" + value
+    return value
 
 
 if __name__ == "__main__":

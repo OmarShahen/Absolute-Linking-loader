@@ -7,6 +7,22 @@ class file_formatter:
         self.file_dict = self.divide_HTME_record()
         self.PROG_name = self.extract_PROG_name()
         self.program_starting_address = self.extract_program_starting_address()
+        self.file_dict['starting_address'] = self.zero_filler(hex(
+            int(self.program_starting_address, 16))[2:])
+        self.file_dict['prog_size'] = self.get_H_record().split(
+            '.')[len(self.get_H_record().split('.'))-1]
+        self.file_dict['prog_name'] = self.extract_PROG_name()
+
+    def return_file_content(self):
+        return self.file_dict
+
+    def zero_filler(self, value, desired_length=6):
+        if "0x" in value:
+            value = value[2:]
+        zero_count = desired_length - len(value)
+        for i in range(zero_count):
+            value = "0" + value
+        return value
 
     def divide_HTME_record(self):
         file_lines = []
@@ -35,7 +51,8 @@ class file_formatter:
             else:
                 file_dict[file_lines[i][0]] = self.remove_new_line(
                     file_lines[i])
-
+        file_dict["num_of_T_records"] = T_counter-1
+        file_dict["num_of_M_records"] = M_counter-1
         return file_dict
 
     def get_H_record(self):
@@ -65,7 +82,7 @@ class file_formatter:
         all_records = []
         T_record = {}
         for key in self.file_dict:
-            if "T" in key:
+            if "T" in key and len(key) == 2:
                 T_data = self.file_dict[key].split(".")
                 T_record["number"] = key
                 T_record["starting_address"] = T_data[1]
